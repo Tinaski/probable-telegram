@@ -9,7 +9,7 @@
 <meta name="viewport" content="width = device-width, initial-scale = 1">
 <title>EpilepsyDB</title>
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <style>
 a{
@@ -94,18 +94,18 @@ a:hover{
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li class="active"><a href="index.php">Home <span class="sr-only">(current)</span></a></li>
-        <li><a href="about.php">About</a></li>
         <li class="dropdown">
             <a href="#" data-toggle="dropdown" class="dropdown-toggle">Browse <b class="caret"></b></a>
             <ul class="dropdown-menu">
                 <li><a href="browsegene.php">Browse by Genes</a></li>
                 <li><a href="browsedisease.php">Browse by Diseases</a></li>
-                <li><a href="browsecommobidity.php">Browse by Commobidities</a></li>
+                <li><a href="browsecomorbidity.php">Browse by Commobidities</a></li>
                 <li class="divider"></li>
                 <li><a href="browsepathway">Browse Pathways</a></li>
                 <li><a href="browsepathway">Browse Functions</a></li>
             </ul>
-        <li><a href="submit.php">Submit</a></li>
+        <li><a href="about.php">Help</a></li>
+        <li><a href="submit.php">Feedback</a></li>
         <li><a href="contact.php">Contact Us</a></li>
       </ul>
 

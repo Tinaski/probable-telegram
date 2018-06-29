@@ -3,7 +3,7 @@
     require_once "pdo.php";
 
     // Prepare for retrieval
-    $stmt = $pdo->query("SELECT phenotype FROM phenotype");
+    $stmt = $pdo->query("SELECT comorbidity FROM comorbid");
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     ?>
 
@@ -134,7 +134,7 @@ a:hover{
 <div class="container">
 <div class="page-header">
 
-<h1>Browse by Epilepsy Phenotype</h1>
+<h1>Browse by Comorbidities</h1>
 </div>
 
   <div class="well">
@@ -144,11 +144,11 @@ a:hover{
       echo("<table border='1' id='myTable' class='table table-bordered table-striped table-hover'>");
       echo("<thead>");
       echo("<tr><th class='text-center'>");
-      echo("Epilepsy Phenotype");
+      echo("Comorbidity");
       echo("</td><th class='text-center'>");
       echo("Genes");
       echo("</td><th class='text-center'>");
-      echo("Comorbidity");
+      echo("Epilepsy Phenotype");
       echo("</td><th class='text-center'>");
       echo("Count");
       echo("</td></tr></thead><tbody>\n");
@@ -157,27 +157,27 @@ a:hover{
 
     require_once "pdo.php";
     // Prepare for retrieval
-    $sql2 = 'SELECT DISTINCT commo FROM articles WHERE phenotype LIKE :keyword';
-    $sql_symbol = 'SELECT DISTINCT symbol FROM articles WHERE phenotype LIKE :keyword';
-    $sql3 = 'SELECT DISTINCT pmid FROM articles WHERE phenotype LIKE :keyword';
+    $sql2 = 'SELECT DISTINCT symbol FROM articles WHERE commo LIKE :keyword';
+    $sql_phenotype = 'SELECT DISTINCT phenotype FROM articles WHERE commo LIKE :keyword';
+    $sql3 = 'SELECT DISTINCT pmid FROM articles WHERE commo LIKE :keyword';
     $stmt2 = $pdo->prepare($sql2);
-    $stmt_symbol = $pdo->prepare($sql_symbol);
+    $stmt_phenotype = $pdo->prepare($sql_phenotype);
     $stmt3 = $pdo->prepare($sql3);
-    $stmt2->bindValue(':keyword',  '%'.$row['phenotype'].'%', PDO::PARAM_STR);
-    $stmt_symbol->bindValue(':keyword',  '%'.$row['phenotype'].'%', PDO::PARAM_STR);
-    $stmt3->bindValue(':keyword',  '%'.$row['phenotype'].'%', PDO::PARAM_STR);
+    $stmt2->bindValue(':keyword',  '%'.$row['comorbidity'].'%', PDO::PARAM_STR);
+    $stmt_phenotype->bindValue(':keyword',  '%'.$row['comorbidity'].'%', PDO::PARAM_STR);
+    $stmt3->bindValue(':keyword',  '%'.$row['comorbidity'].'%', PDO::PARAM_STR);
     $stmt2->execute();
-    $stmt_symbol->execute();
+    $stmt_phenotype->execute();
     $stmt3->execute();
     $rows2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-    $rows_symbol = $stmt_symbol->fetchAll(PDO::FETCH_ASSOC);
+    $rows_phenotype = $stmt_phenotype->fetchAll(PDO::FETCH_ASSOC);
     $rows3 = $stmt3->fetchAll(PDO::FETCH_ASSOC);
     $num_rows2 = $stmt2->rowCount();
-    $num_rows_symbol = $stmt_symbol->rowCount();
-    $num_rows = $stmt3->rowCount();
+    $num_rows_phenotype = $stmt_phenotype->rowCount();
+    $num_rows3 = $stmt3->rowCount();
 
       echo("<tr><td>");
-      echo(htmlentities($row['phenotype']));
+      echo(htmlentities($row['comorbidity']));
       echo("</td><td>Count:$num_rows2<br>");
       echo('<a data-toggle="collapse" href="#collapsedA');
       echo($collapsed);
@@ -185,25 +185,25 @@ a:hover{
       echo('<div class="collapse" id="collapsedA');
       echo($collapsed);
       echo('"><div class="card card-body">');
-      foreach ( $rows_symbol as $row_symbola ) {
-      echo(htmlentities($row_symbola['symbol']));
-      echo('<br><a href="detail.php?symbol='.$row_symbola['symbol'].'">(more)</a>');
+      foreach ( $rows2 as $row22 ) {
+      echo(htmlentities($row22['symbol']));
+      echo('<br><a href="detail.php?symbol='.$row22['symbol'].'">(more)</a>');
       echo("<br>");}
       echo('</div></div>');
 
-      echo("</td><td>Count:$num_rows_symbol<br>");
+      echo("</td><td>Count:$num_rows_phenotype<br>");
       echo('<a data-toggle="collapse" href="#collapsedB');
       echo($collapsed);
       echo('">Details</a>');
       echo('<div class="collapse" id="collapsedB');
       echo($collapsed);
       echo('"><div class="card card-body">');
-      foreach ( $rows2 as $row22 ) {
-      echo(htmlentities($row22['commo']));
+      foreach ( $rows_phenotype as $row_phenotype ) {
+      echo(htmlentities($row_phenotype['phenotype']));
       echo("<br>");}
       echo('</div></div>');
     #  echo('<a class="btn btn-primary" href="detail.php?symbol='.$row['symbol'].'">Details</a>');
-    echo("</td><td>Count:$num_rows<br>");
+    echo("</td><td>Count:$num_rows3<br>");
     echo('<a data-toggle="collapse" href="#collapsedC');
     echo($collapsed);
     echo('">Details</a>');
@@ -226,11 +226,11 @@ a:hover{
 </div>
 </div>
 
-  <script>
-  $(document).ready(function(){
-      $('#myTable').dataTable();
-  });
-  </script>
+<script>
+$(document).ready(function(){
+    $('#myTable').dataTable();
+});
+</script>
 
     <footer class="footer">
       <div class="container">

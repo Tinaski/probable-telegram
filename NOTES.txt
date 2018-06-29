@@ -23,7 +23,7 @@ aliases VARCHAR(255),
 articletitle VARCHAR(255),
 journalabbr VARCHAR(255),
 journaltitle VARCHAR(255),
-description VARCHAR(255),
+description VARCHAR(555),
 pubyear INTEGER,
 researchtype VARCHAR(255),
 effect VARCHAR(255),
@@ -40,7 +40,7 @@ phenotypeabbr VARCHAR(128),
 sample VARCHAR(255),
 subcategory VARCHAR(255),
 transcriptid VARCHAR(128),
-onset VARCHAR(128),
+onset VARCHAR(128)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE comments(
@@ -59,21 +59,62 @@ comment_id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT
 
 CREATE TABLE genes(
   
-genes VARCHAR(258),
- 
-genes_id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT
+genes VARCHAR(255)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE comorbid(
   
-comorbidity VARCHAR(258),
- 
-comor_id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT
+comorbidity VARCHAR(255)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE phenotype(
   
-phenotype VARCHAR(258),
+phenotype VARCHAR(255)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE rna (
+   
+article_id INTEGER NOT NULL,
+pmid INTEGER,
+
+pubyear INTEGER,
+journaltitle VARCHAR(255),
+journalabbr VARCHAR(255),
+articletitle VARCHAR(255),
+pubtype VARCHAR(255),
+rnagroup VARCHAR(255),
+rnasubgroup VARCHAR(255),
+description VARCHAR(255)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE tf (
  
-pheno_id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT
+article_id INTEGER NOT NULL,
+pmid INTEGER,
+
+pubyear INTEGER,
+journaltitle VARCHAR(255),
+journalabbr VARCHAR(255),
+articletitle VARCHAR(255),
+pubtype VARCHAR(255),
+transcript VARCHAR(255),
+description VARCHAR(255)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE epi (
+ 
+article_id INTEGER NOT NULL,
+pmid INTEGER,
+
+pubyear INTEGER,
+journaltitle VARCHAR(255),
+journalabbr VARCHAR(255),
+articletitle VARCHAR(255),
+pubtype VARCHAR(255),
+rna VARCHAR(255),
+epigenetics VARCHAR(255),
+epigenetic change VARCHAR(255),
+description VARCHAR(255)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

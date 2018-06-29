@@ -9,7 +9,7 @@
 <meta name="viewport" content="width = device-width, initial-scale = 1">
 <title>EpilepsyDB</title>
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <style>
 a{
@@ -91,10 +91,11 @@ a:hover{
             <ul class="dropdown-menu">
                 <li><a href="browsegene.php">Browse by Genes</a></li>
                 <li><a href="browsedisease.php">Browse by Diseases</a></li>
-                <li><a href="browsecommobidity.php">Browse by Commobidities</a></li>
+                <li><a href="browsecomorbidity.php">Browse by Commobidities</a></li>
                 <li class="divider"></li>
-                <li><a href="browsepathway">Browse Pathways</a></li>
-                <li><a href="browsepathway">Browse Functions</a></li>
+                <li><a href="browserna.php">Browse RNAs</a></li>
+                <li><a href="browseepi.php">Browse Epigenetic Changes</a></li>
+                <li><a href="browsetf.php">Browse Transcriptive Factors</a></li>
             </ul>
 
         <li><a href="about.php">Help</a></li>
@@ -131,6 +132,7 @@ a:hover{
       as well as facilitate future meta-analyses and studies on publication bias.
       It is also hoped that it will foster collaboration between the different epilepsy genetics groups
       around the world, and faciliate formation of a network of investigators in epilepsy genetics.</small>
+
 </p>
 </div>
 </div>
@@ -141,17 +143,19 @@ a:hover{
   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
     <div class="thumbnail">
       <div class="caption">
-        <h3>Acknowledgement</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.</p><br><br>
+        <h3> Statistics</h3>
+        <p><ul><li>Number of articles: 317</li>
+              <li>Number of genes: 78</li>
+              <li>Number of epilepsy phenotypes: 42</li>
+              <li>Number of comobidities: 48</li></ul></p><br><br>
       </div>
     </div>
   </div>
   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
     <div class="thumbnail">
       <div class="caption">
-        <h3>Links</h3>
-         <ul class="list-unstyled">
+        <h3> Links</h3>
+         <ul>
             <li><a href="https://www.ncbi.nlm.nih.gov/pubmed/?term=epilepsy">
               Search on PubMed</a></li>
             <li><a href="https://www.epilepsydiagnosis.org/">ILAE Commission</a></li>
@@ -159,6 +163,7 @@ a:hover{
               PubMed Health</a></li>
             <li><a href="https://medlineplus.gov/epilepsy.html#cat_78">MedlinePlus</a></li>
           </ul>
+          <br><br>
       </div>
       </div>
   </div>

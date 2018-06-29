@@ -1,25 +1,34 @@
 <?php
   session_start();
   require_once "pdo.php";
-    if(isset($_GET['submit'])){
-    if(preg_match("/^[  a-zA-Z]+/", $_GET['symbol'])){
-        $symbol = (!empty($_GET['symbol'])) ? $_GET['symbol'] : "";
-        $sql = 'SELECT symbol, genename, chromosome FROM genes WHERE symbol=:keyword ORDER BY pubyear DESC LIMIT 1';
+    if(preg_match("/^[  0-9]+/", $_GET['pmid'])){
+        $pmid = (!empty($_GET['pmid'])) ? $_GET['pmid'] : "";
+        $sql = 'SELECT pmid, symbol, genename, chromosome, aliases, articletitle, journalabbr, journaltitle,
+        description, pubyear, researchtype, effect, ethnicity, inheritance,
+        method, no_case, no_control, phenotype, category, phenotypeabbr, commo,
+        sample, subcategory, transcriptid, onset FROM articles WHERE pmid=:keyword ORDER BY pubyear DESC LIMIT 1';
+        $sql2 = 'SELECT DISTINCT symbol, genename, chromosome, aliases FROM articles WHERE pmid=:keyword ORDER BY pubyear DESC';
         $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':keyword',  $symbol, PDO::PARAM_STR);
+        $stmt2 = $pdo->prepare($sql2);
+        $stmt->bindValue(':keyword',  $pmid, PDO::PARAM_STR);
+        $stmt2->bindValue(':keyword',  $pmid, PDO::PARAM_STR);
         $stmt->execute();
+        $stmt2->execute();
         if(!$stmt->rowCount()){
           //if the results is null
         $result = "no result found";}else{
           //found some row according to your search
           //do some operations based on your application
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $genes =  $stmt2->fetchAll(PDO::FETCH_ASSOC);
+        $num_rows = $stmt2->rowCount();
+        $row = $rows[0];
     /*    $num=0;
         foreach($result as $value)
         {
           $num++;
         } */
-}}}
+}}
 ?>
 
 <!DOCTYPE html>
@@ -33,7 +42,7 @@
 <meta name="viewport" content="width = device-width, initial-scale = 1">
 <title>EpilepsyDB</title>
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <style>
 a{
@@ -108,18 +117,18 @@ a:hover{
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li class="active"><a href="index.php">Home <span class="sr-only">(current)</span></a></li>
-        <li><a href="about.php">About</a></li>
         <li class="dropdown">
             <a href="#" data-toggle="dropdown" class="dropdown-toggle">Browse <b class="caret"></b></a>
             <ul class="dropdown-menu">
                 <li><a href="browsegene.php">Browse by Genes</a></li>
                 <li><a href="browsedisease.php">Browse by Diseases</a></li>
-                <li><a href="browsecommobidity.php">Browse by Commobidities</a></li>
+                <li><a href="browsecomorbidity.php">Browse by Commobidities</a></li>
                 <li class="divider"></li>
                 <li><a href="browsepathway">Browse Pathways</a></li>
                 <li><a href="browsepathway">Browse Functions</a></li>
             </ul>
-        <li><a href="submit.php">Submit</a></li>
+        <li><a href="about.php">Help</a></li>
+        <li><a href="submit.php">Feedback</a></li>
         <li><a href="contact.php">Contact Us</a></li>
       </ul>
 
@@ -140,44 +149,103 @@ a:hover{
 
 <div class="container">
 <div class="page-header">
-<h1>Search Result</h1>
+<h1>References</h1>
 </div>
 
   <div class="well">
   <div class="container">
-    <div class="col-md-7">
-  <?php
-    if (isset($rows)){
-      echo("<table border='1' class='table table-bordered table-striped table-hover'>");
-      echo("<thead><tr><td colspan='4'>Gene information</td></tr></thead><tbody>");
-      echo("<tr><th class='text-center'>");
-      echo("Gene symbol");
-      echo("</td><th class='text-center'>");
-      echo("Epilepsy subtype");
-      echo("</td><th class='text-center'>");
-      echo("Comobidities");
-      echo("</td><th class='text-center'>");
-      echo("Related articles");
-      echo("</td></tr>\n");
-  foreach ( $rows as $row ) {
-      echo("<tr><td>");
-      echo(htmlentities($row['symbol']));
-      echo('<a href="detail.php?symbol='.$row['symbol'].'"> (info)</a>');
-      echo("</td><td>");
-      echo(htmlentities($row['genename']));
-      echo('<a href="detail.php?symbol='.$row['symbol'].'"> (info)</a>');
-      echo("</td><td>");
-      echo(htmlentities($row['chromosome']));
-      echo("</td><td>");
-      echo(htmlentities($row['chromosome']));
-      echo("</td></tr>\n");
-  }
-  echo("</tbody></table>\n");
-  }else if(isset($result)){
-    echo($result);
-    unset($result);
-  }
-  ?>
+    <div class="col-md-10">
+
+      <table border='1' class='table table-bordered table-striped table-hover'>
+        <thead><tr><td colspan='8'>References</td></tr></thead>
+        <tbody><tr>
+                <th class='text-center'>PubMed ID</td>
+                <th class='text-center'>Associated gene/s</td>
+                <th class='text-center'>Epilepsy Phenotype</td>
+                <th class='text-center'>Genetic Mutation</td>
+                <th class='text-center'>Comorbidities</td>
+                <th class='text-center'>Ethnicity</td>
+                <th class='text-center'>Description</td></tr>
+                <tr>
+                <td><a href=http://www.ncbi.nlm.nih.gov/pubmed/?term=<?php echo $row['pmid']; ?> target=_blank><?php echo $row['pmid']; ?></a></td>
+                <td><?php
+                foreach ( $genes as $gene ) {
+                echo($gene['symbol']);
+                echo('<br>');}
+                ?></td>
+          <!--      echo $row['symbol']; ?> -->
+                <td><?php echo $row['phenotype']; ?></td>
+                <td><?php echo $row['category']; ?></td>
+                <td><?php echo $row['commo']; ?></td>
+                <td><?php echo $row['ethnicity']; ?></td>
+                <td><?php echo $row['description']; ?></td>
+              </tr></tbody></table>
+
+      <table border='1' class='table table-bordered table-striped table-hover' width="700px">
+        <tr><td rowspan="5" width="140px"><b>Basic ref Info.</b></td>
+          <td width="120px"><b>PubMed ID</b></td>
+          <td><a href=http://www.ncbi.nlm.nih.gov/pubmed/?term=<?php echo $row['pmid']; ?> target=_blank><?php echo $row['pmid']; ?></td></tr>
+          <tr><td width="120px"><b>Article Title</b></td>
+          <td><?php echo $row['articletitle']; ?></td></tr>
+          <tr><td width="120px"><b>Journal</b></td>
+          <td><?php echo $row['journaltitle']; ?></td></tr>
+          <tr><td width="120px"><b>Journal Abbreviation</b></td>
+          <td><?php echo $row['journalabbr']; ?></td></tr>
+          <tr><td width="120px"><b>Publish Year</b></td>
+          <td><?php echo $row['pubyear']; ?></td></tr>
+
+          <tr><td rowspan="<?php echo 4*$num_rows+4; ?>" width="140px"><b>Related Gene Info.</b></td>
+          <?php
+          foreach ( $genes as $gene ) {
+          echo('<td width="120px"><b>Gene Symbol</b></td>');
+          echo("<td>");
+          echo($gene['symbol']);
+          echo("</td></tr>");
+          echo('<tr><td width="120px"><b>Gene Name</b></td>');
+          echo("<td>");
+          echo($gene['genename']);
+          echo("</td></tr>");
+          echo('<td width="120px"><b>Aliases</b></td>');
+          echo("<td>");
+          echo($gene['aliases']);
+          echo("</td></tr>");
+          echo('<tr><td width="120px"><b>Band</b></td>');
+          echo("<td>");
+          echo($gene['chromosome']);
+          echo("</td></tr>");
+          }?>
+          <tr><td width="120px"><b>Category</b></td>
+          <td><?php echo $row['category']; ?></td></tr>
+          <tr><td width="120px"><b>Subcategory</b></td>
+          <td><?php echo $row['subcategory']; ?></td></tr>
+          <tr><td width="120px"><b>Effect</b></td>
+          <td><?php echo $row['effect']; ?></td></tr>
+          <tr><td width="120px"><b>Description</b></td>
+          <td><?php echo $row['description']; ?></td></tr>
+
+          <tr><td rowspan="3" width="140px"><b>Epilepsy<br>Comorbidities<br>Info.</b></td>
+          <td width="120px"><b>Epilepsy Phenotype</b></td>
+          <td><?php echo $row['phenotype']; ?></td></tr>
+          <tr><td width="120px"><b>Phenotype Abbreviation</b></td>
+          <td><?php echo $row['phenotypeabbr']; ?></td></tr>
+          <tr><td width="120px"><b>Comorbidities</b></td>
+          <td><?php echo $row['commo']; ?></td></tr>
+
+          <tr><td rowspan="6" width="140px"><b>Research Info.</b></td>
+          <td width="120px"><b>Research Type</b></td>
+          <td><?php echo $row['researchtype']; ?></td></tr>
+          <tr><td width="120px"><b>Method</b></td>
+          <td><?php echo $row['method']; ?></td></tr>
+          <tr><td width="120px"><b>Sample</b></td>
+          <td><?php echo $row['sample']; ?></td></tr>
+          <tr><td width="120px"><b>No_case</b></td>
+          <td><?php echo $row['no_case']; ?></td></tr>
+          <tr><td width="120px"><b>No_control</b></td>
+          <td><?php echo $row['no_control']; ?></td></tr>
+          <tr><td width="120px"><b>Ethinicity</b></td>
+          <td><?php echo $row['ethnicity']; ?></td></tr>
+
+        </table>
   </div>
 </div>
 </div>

@@ -17,9 +17,14 @@
 <!-- Set the page to the width of the device and set the zoon level -->
 <meta name="viewport" content="width = device-width, initial-scale = 1">
 <title>EpilepsyDB</title>
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="jquery.min.js"></script>
+<link rel="stylesheet"
+href="http://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"></style>
+<script type="text/javascript"
+src="http://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript"
+src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <style>
 a{
   color: dimgray;
@@ -99,7 +104,7 @@ a:hover{
             <ul class="dropdown-menu">
                 <li><a href="browsegene.php">Browse by Genes</a></li>
                 <li><a href="browsedisease.php">Browse by Diseases</a></li>
-                <li><a href="browsecommobidity.php">Browse by Commobidities</a></li>
+                <li><a href="browsecomorbidity.php">Browse by Commobidities</a></li>
                 <li class="divider"></li>
                 <li><a href="browsepathway">Browse Pathways</a></li>
                 <li><a href="browsepathway">Browse Functions</a></li>
@@ -136,8 +141,8 @@ a:hover{
   <div class="container text-center">
     <div class="col-md-11">
   <?php
-      echo("<table border='1' class='table table-bordered table-striped table-hover'>");
-      echo("<thead><tr><td colspan='4'>Gene information</td></tr></thead><tbody>");
+      echo("<table border='1' id='myTable' class='table table-bordered table-striped table-hover'>");
+      echo("<thead>");
       echo("<tr><th class='text-center'>");
       echo("Gene symbol");
       echo("</td><th class='text-center'>");
@@ -145,40 +150,66 @@ a:hover{
       echo("</td><th class='text-center'>");
       echo("Comorbidity");
       echo("</td><th class='text-center'>");
-      echo("Count");
-      echo("</td></tr>\n");
+      echo("Publication");
+      echo("</td></tr></thead><tbody>\n");
+      $collapsed = 0;
   foreach ( $rows as $row ) {
 
     require_once "pdo.php";
     // Prepare for retrieval
-    $sql2 = 'SELECT DISTINCT phenotype, commo FROM articles WHERE symbol=:keyword';
-    $sql3 = 'SELECT symbol FROM articles WHERE symbol=:keyword';
+    $sql2 = 'SELECT DISTINCT commo FROM articles WHERE symbol=:keyword';
+    $sql_phenotype = 'SELECT DISTINCT phenotype FROM articles WHERE symbol=:keyword';
+    $sql3 = 'SELECT DISTINCT pmid FROM articles WHERE symbol=:keyword';
     $stmt2 = $pdo->prepare($sql2);
+    $stmt_phenotype = $pdo->prepare($sql_phenotype);
     $stmt3 = $pdo->prepare($sql3);
     $stmt2->bindValue(':keyword',  $row['genes'], PDO::PARAM_STR);
+    $stmt_phenotype->bindValue(':keyword',  $row['genes'], PDO::PARAM_STR);
     $stmt3->bindValue(':keyword',  $row['genes'], PDO::PARAM_STR);
     $stmt2->execute();
+    $stmt_phenotype->execute();
     $stmt3->execute();
     $rows2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+    $rows_pheno = $stmt_phenotype->fetchAll(PDO::FETCH_ASSOC);
+    $rows3 = $stmt3->fetchAll(PDO::FETCH_ASSOC);
     $num_rows = $stmt3->rowCount();
 
       echo("<tr><td>");
       echo(htmlentities($row['genes']));
-      echo('<br><a class="btn btn-primary btn-sm" href="detail.php?symbol='.$row['genes'].'">Details</a>');
+      echo('<a href="detail.php?symbol='.$row['genes'].'"> (info)</a>');
       echo("</td><td>");
-      foreach ( $rows2 as $row22 ) {
-      echo(htmlentities($row22['phenotype']));
+      foreach ( $rows_pheno as $rows_phenola ) {
+      echo(htmlentities($rows_phenola['phenotype']));
       echo("<br>");}
       echo("</td><td>");
       foreach ( $rows2 as $row22 ) {
       echo(htmlentities($row22['commo']));
       echo("<br>");}
     #  echo('<a class="btn btn-primary" href="detail.php?symbol='.$row['symbol'].'">Details</a>');
-      echo("</td><td>$num_rows</td>");
-      echo("</tr>\n");
+      echo("</td><td>Count:$num_rows<br>");
+      echo('<a data-toggle="collapse" href="#collapsedExample');
+      echo($collapsed);
+      echo('">Details</a>');
+      echo('<div class="collapse" id="collapsedExample');
+      echo($collapsed);
+      echo('"><div class="card card-body">');
+      foreach ( $rows3 as $row33 ) {
+      echo("PMID");
+      echo(htmlentities($row33['pmid']));
+      echo('<a href="articles.php?pmid='.$row33['pmid'].'"> (more)</a>');
+      echo("<br>");}
+    $collapsed = $collapsed + 1;
+      echo('</div></div>');
+      echo("</td></tr>\n");
   }
   echo("</tbody></table>\n");
   ?>
+
+  <script>
+  $(document).ready(function(){
+      $('#myTable').dataTable();
+  });
+  </script>
   <br></div>
 </div>
 </div>

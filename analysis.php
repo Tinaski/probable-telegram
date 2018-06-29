@@ -84,7 +84,7 @@ a:hover{
         <li class="active"><a href="index.php">Home <span class="sr-only">(current)</span></a></li>
         <li><a href="about.php">About</a></li>
         <li><a href="analysis.php">Analysis</a></li>
-        <li><a href="submit.php">Submit</a></li>
+        <li><a href="submit.php">Feedback</a></li>
         <li><a href="contact.php">Contact Us</a></li>
       </ul>
 

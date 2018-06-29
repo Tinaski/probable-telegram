@@ -4,7 +4,7 @@
     if(isset($_GET['symbol'])){
     if(preg_match("/^[  a-zA-Z]+/", $_GET['symbol'])){
         $symbol = (!empty($_GET['symbol'])) ? $_GET['symbol'] : "";
-        $sql = 'SELECT symbol, genename, chromosome FROM genes WHERE symbol=:keyword ORDER BY pubyear DESC LIMIT 1';
+        $sql = 'SELECT symbol, genename, chromosome, aliases FROM articles WHERE symbol=:keyword ORDER BY pubyear DESC LIMIT 1';
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':keyword',  $symbol, PDO::PARAM_STR);
         $stmt->execute();
@@ -16,6 +16,7 @@
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $genename = $rows[0]['genename'];
         $chromosome = $rows[0]['chromosome'];
+        $aliases = $rows[0]['aliases'];
     /*    $num=0;
         foreach($result as $value)
         {
@@ -35,7 +36,7 @@
 <meta name="viewport" content="width = device-width, initial-scale = 1">
 <title>EpilepsyDB</title>
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <style>
 a{
@@ -116,12 +117,12 @@ a:hover{
             <ul class="dropdown-menu">
                 <li><a href="browsegene.php">Browse by Genes</a></li>
                 <li><a href="browsedisease.php">Browse by Diseases</a></li>
-                <li><a href="browsecommobidity.php">Browse by Commobidities</a></li>
+                <li><a href="browsecomorbidity.php">Browse by Commobidities</a></li>
                 <li class="divider"></li>
                 <li><a href="browsepathway">Browse Pathways</a></li>
                 <li><a href="browsepathway">Browse Functions</a></li>
             </ul>
-        <li><a href="submit.php">Submit</a></li>
+        <li><a href="submit.php">Feedback</a></li>
         <li><a href="contact.php">Contact Us</a></li>
       </ul>
 
@@ -176,25 +177,24 @@ a:hover{
   }
   ?>
   <table border='1' class='table table-bordered table-striped table-hover' width="700px">
-    <tr><td rowspan="8" width="140px"><b>Basic gene Info.</b></td>
+    <tr><td rowspan="7" width="140px"><b>Basic gene Info.</b></td>
       <td width="120px"><b>Gene symbol</b></td>
       <td><a href=http://www.ncbi.nlm.nih.gov/gene/?term=<?php echo $symbol; ?> target=_blank><?php echo $symbol; ?></a></td></tr>
       <tr><td width="120px"><b>Gene name</b></td>
       <td><?php echo $genename; ?></td></tr>
       <tr><td width="120px"><b>Synonyms</b></td>
-      <td>B-RAF1|BRAF1|NS7|RAFB1</td></tr>
+      <td><?php echo $aliases; ?></td></tr>
       <tr><td width="120px"><b>Cytomap</b></td>
       <td><a href=http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=<?php echo $chromosome; ?> target=_blank>UCSC genome browser: <?php echo $chromosome; ?></a></td></tr>
       <tr><td width="120px"><b>Type of gene</b></td>
       <td>protein-coding</td></tr><tr><td width="120px"><b>RefGenes</b></td>
-      <td><a href=http://www.ncbi.nlm.nih.gov/gene/?term=BRAF target=_blank>NM_004333.4,<br></a></td></tr>
-      <tr><td width="120px"><b>Description</b></td>
-      <td>94 kDa B-raf proteinB-Raf proto-oncogene serine/threonine-protein kinase (p94)murine sarcoma viral (v-raf) oncogene homolog B1proto-oncogene B-Rafserine/threonine-protein kinase B-rafv-raf murine sarcoma viral oncogene homolog Bv-raf murine sarcoma </td></tr><tr><td width="120px"><b>Modification date</b></td><td>20141222</td></tr><tr><td rowspan="5" width="140px"><b>dbXrefs </b></td>
-      <td colspan="2">MIM : 164757</td></tr>
-      <tr><td colspan="2">HGNC : HGNC</td></tr>
-      <tr><td colspan="2">Ensembl : ENSG00000157764</td></tr>
-      <tr><td colspan="2">HPRD : 01264</td></tr>
-      <tr><td colspan="2">Vega : OTTHUMG00000157457</td></tr>
+      <td><a href=http://www.ncbi.nlm.nih.gov/gene/?term=<?php echo $symbol; ?> target=_blank>NCBI Gene<br></a></td></tr>
+      <tr><td width="120px"><b>Modification date</b></td><td>20171101</td></tr>
+      <tr><td rowspan="4" width="140px"><b>dbXrefs </b></td>
+      <td colspan="2"><a href=https://www.genecards.org/cgi-bin/carddisp.pl?gene=<?php echo $symbol; ?>&keywords=<?php echo $symbol; ?> target=_blank>Gene Cards</td></tr>
+      <tr><td colspan="2"><a href=https://www.genenames.org/cgi-bin/search?search_type=all&search=<?php echo $symbol; ?>&submit=Submit target=_blank>HGNC : HGNC<br></a></td></tr>
+      <tr><td colspan="2"><a href=http://asia.ensembl.org/Human/Search/Results?q=<?php echo $symbol; ?>;site=ensembl;facet_species=Human target=_blank>Ensembl : Ensembl</td></tr>
+      <tr><td colspan="2"><a href=http://vega.archive.ensembl.org/Homo_sapiens/Search/Results?q=<?php echo $symbol; ?>;site=vega;facet_species=Human target=_blank>Vega : Vega</td></tr>
       <tr><td width="140px"><b>Protein</b></td>
       <td colspan="2"><a href=http://www.uniprot.org/uniprot/?query=<?php echo $symbol; ?>_human target=_blank>UniProt: <?php echo $symbol; ?>_HUMAN </a><br><a href="#CrossReferencedDB">go to UniProt's Cross Reference DB Table</a></td></tr>
       <tr><td rowspan=2 width="140px"><b>Expression</b></td>
