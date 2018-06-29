@@ -1,0 +1,79 @@
+To get started run the following SQL commands:
+
+
+CREATE DATABASE epdb;
+
+GRANT ALL ON epdb.* TO 'root'@'localhost' IDENTIFIED BY 'root';
+
+GRANT ALL ON epdb.* TO 'root'@'127.0.0.1' IDENTIFIED BY 'root';
+
+USE epdb; (Or select epdb in phpMyAdmin)
+
+
+
+CREATE TABLE articles (
+   
+article_id INTEGER NOT NULL,
+pmid INTEGER,
+
+symbol VARCHAR(128),
+genename VARCHAR(255),
+chromosome VARCHAR(255),
+aliases VARCHAR(255),
+articletitle VARCHAR(255),
+journalabbr VARCHAR(255),
+journaltitle VARCHAR(255),
+description VARCHAR(255),
+pubyear INTEGER,
+researchtype VARCHAR(255),
+effect VARCHAR(255),
+ethnicity VARCHAR(255),
+inheritance VARCHAR(255),
+commo VARCHAR(255),
+method VARCHAR(255),
+no_case INTEGER,
+no_control INTEGER,
+phenotype VARCHAR(255),
+phenotypes VARCHAR(255),
+category VARCHAR(255),
+phenotypeabbr VARCHAR(128),
+sample VARCHAR(255),
+subcategory VARCHAR(255),
+transcriptid VARCHAR(128),
+onset VARCHAR(128),
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE comments(
+   
+name VARCHAR(128),
+ 
+email VARCHAR(255),
+pmid VARCHAR(128),
+ 
+symbol VARCHAR(128),
+ 
+comment VARCHAR(255),
+comment_id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE genes(
+  
+genes VARCHAR(258),
+ 
+genes_id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE comorbid(
+  
+comorbidity VARCHAR(258),
+ 
+comor_id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE phenotype(
+  
+phenotype VARCHAR(258),
+ 
+pheno_id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
