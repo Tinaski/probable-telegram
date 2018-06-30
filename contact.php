@@ -91,9 +91,10 @@ a:hover{
                 <li><a href="browsedisease.php">Browse by Diseases</a></li>
                 <li><a href="browsecomorbidity.php">Browse by Commobidities</a></li>
                 <li class="divider"></li>
-                <li><a href="browsepathway">Browse Pathways</a></li>
-                <li><a href="browsepathway">Browse Functions</a></li>
-            </ul>
+                <li><a href="browserna.php">Browse RNAs</a></li>
+                <li><a href="browseepi.php">Browse Epigenetic Changes</a></li>
+                <li><a href="browsetf.php">Browse Transcriptive Factors</a></li>
+                </ul>
         <li><a href="about.php">Help</a></li>
         <li><a href="submit.php">Feedback</a></li>
         <li><a href="contact.php">Contact Us</a></li>

@@ -1,26 +1,11 @@
 <?php
-  session_start();
-  require_once "pdo.php";
-    if(isset($_GET['submit'])){
-    if(preg_match("/^[  a-zA-Z]+/", $_GET['symbol'])){
-        $symbol = (!empty($_GET['symbol'])) ? $_GET['symbol'] : "";
-        $sql = 'SELECT symbol, genename, chromosome FROM genes WHERE symbol=:keyword ORDER BY pubyear DESC LIMIT 1';
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':keyword',  $symbol, PDO::PARAM_STR);
-        $stmt->execute();
-        if(!$stmt->rowCount()){
-          //if the results is null
-        $result = "no result found";}else{
-          //found some row according to your search
-          //do some operations based on your application
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    /*    $num=0;
-        foreach($result as $value)
-        {
-          $num++;
-        } */
-}}}
-?>
+    // Connect to database in the file: misc
+    require_once "pdo.php";
+
+    // Prepare for retrieval
+    $stmt = $pdo->query("SELECT * FROM rna");
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -32,9 +17,14 @@
 <!-- Set the page to the width of the device and set the zoon level -->
 <meta name="viewport" content="width = device-width, initial-scale = 1">
 <title>EpilepsyDB</title>
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet"
+href="http://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"></style>
+<script type="text/javascript"
+src="http://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript"
+src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <style>
 a{
   color: dimgray;
@@ -45,8 +35,9 @@ a:hover{
 }
 
 .jumbotron{
-    background-color:grey;
-    color:white;
+    background-color:#f5f5f5;
+    color:#777777;
+    border: 1px solid #ddd;
 }
 /* Adds borders for tabs */
 .tab-content {
@@ -63,7 +54,7 @@ a:hover{
   height: 50px;
 }
 .footer {
-  position: fixed;
+  position: relative;
   bottom: 0;
   width: 100%;
   /* Set the fixed height of the footer here */
@@ -77,8 +68,7 @@ a:hover{
 </head>
 
 <body>
-<!-- Collapsible Navigation Bar -->
-<div class="container">
+<!-- Collapsible Navigation Bar --><div class="container">
 
 <!-- .navbar-fixed-top, or .navbar-fixed-bottom can be added to keep the nav bar fixed on the screen -->
 <nav class="navbar navbar-default">
@@ -108,7 +98,7 @@ a:hover{
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li class="active"><a href="index.php">Home <span class="sr-only">(current)</span></a></li>
-        <li><a href="about.php">About</a></li>
+
         <li class="dropdown">
             <a href="#" data-toggle="dropdown" class="dropdown-toggle">Browse <b class="caret"></b></a>
             <ul class="dropdown-menu">
@@ -116,9 +106,12 @@ a:hover{
                 <li><a href="browsedisease.php">Browse by Diseases</a></li>
                 <li><a href="browsecomorbidity.php">Browse by Commobidities</a></li>
                 <li class="divider"></li>
-                <li><a href="browsepathway">Browse Pathways</a></li>
-                <li><a href="browsepathway">Browse Functions</a></li>
-            </ul>
+                <li><a href="browserna.php">Browse RNAs</a></li>
+                <li><a href="browseepi.php">Browse Epigenetic Changes</a></li>
+                <li><a href="browsetf.php">Browse Transcriptive Factors</a></li>
+                </ul>
+
+        <li><a href="about.php">Help</a></li>
         <li><a href="submit.php">Feedback</a></li>
         <li><a href="contact.php">Contact Us</a></li>
       </ul>
@@ -136,37 +129,60 @@ a:hover{
   </div><!-- /.container-fluid -->
 </nav>
 </div>
+<!-- end navbar -->
 <br>
 
 <div class="container">
 <div class="page-header">
-<h1>Advance Research</h1>
+
+<h1>Browse Related RNA Info.</h1>
 </div>
+
   <div class="well">
-  <div class="container">
-        <div class="col-md-7">
-          <form class="navbar-form navbar-right" role="search"
-          method="get" id="searchform" action="search.php">
-            <div class="form-group">
-              <input type="text" class="form-control"
-              name="symbol">
-              <select type="text" class="form-control"
-              name="epitype">
-              <option value="">Select Column</option>
-              </select>
-              <select type="text" class="form-control"
-              name="comobi">
-              <option value="">Select Column</option>
-              </select>
-            </div>
-            <button type="submit" class="btn btn-default" name="submit">Go</button>
-          </form>
-		</div>
-	</div>
-</form>
-  </div>
+  <div class="container text-center">
+    <div class="col-md-11">
+      <table border='1' id='myTable' class='table table-bordered table-striped table-hover'>
+        <thead><tr>
+          <th class="text-center">RNA Group
+          </th><th class="text-center">RNA Subgroup
+          </th><th class="text-center">Publish Year
+          </th><th class="text-center">Journal Title
+          </th><th class="text-center">Journal Abbreviation
+          </th><th class="text-center">Article Title
+          </th><th class="text-center">Pubmed ID</th>
+        </tr></thead>
+        <tbody>
+        <?php
+        foreach ( $rows as $row ) {
+            echo("<tr><td>");
+            echo(htmlentities($row['rnagroup']));
+            echo("</td><td>");
+            echo(htmlentities($row['rnasubgroup']));
+            echo("</td><td>");
+            echo(htmlentities($row['pubyear']));
+            echo("</td><td>");
+            echo(htmlentities($row['journaltitle']));
+            echo("</td><td>");
+            echo(htmlentities($row['journalabbr']));
+            echo("</td><td>");
+            echo(htmlentities($row['articletitle']));
+            echo("</td><td>");
+            echo(htmlentities($row['pmid']));
+            echo('<a href="articles.php?pmid='.$row['pmid'].'"> (more)</a>');
+            echo("</td></tr>");}
+        ?>
+        </tbody></table>
+  <script>
+  $(document).ready(function(){
+      $('#myTable').dataTable();
+  });
+  </script>
+  <br></div>
 </div>
 </div>
+</div>
+
+
     <footer class="footer">
       <div class="container">
         <p class="text-muted">    © Department of Neurology, The Second Affiliated Hospital of Harbin Medical University, Harbin 150081, China</p>
